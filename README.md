@@ -13,4 +13,4 @@ This is a simple shopping app named Buyzio built with React, Material-UI (MUI), 
 
 - Responsive UI with MUI
 
-#More features coming soon!!!
+# More features coming soon!!!
