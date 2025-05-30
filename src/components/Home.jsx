@@ -70,8 +70,13 @@ const Home = () => {
   const theme = useTheme();
 
   const handleAddToCart = (item) => {
-    setCart((prev) => [...prev, item]);
-  };
+  setCart((prev) => {
+    const updatedCart = [...prev, item];
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+    return updatedCart;
+  });
+  navigate('/cart');  // Navigate to cart page on add
+};
 
   const filteredItems = mockItems.filter((item) =>
     item.name.toLowerCase().includes(search.toLowerCase())
