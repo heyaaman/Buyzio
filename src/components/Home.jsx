@@ -29,6 +29,10 @@ import { ShoppingCart, Menu as MenuIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import ThemeToggle from '../components/ThemeToggle';
 import { motion } from 'framer-motion';
+import { loadStripe } from '@stripe/stripe-js';
+import axios from 'axios';
+
+import Cart from '../components/Cart'; // Import your Cart component
 
 const mockItems = [
   { id: 1, name: 'Item 1', price: '$10.00' },
@@ -54,6 +58,10 @@ const mockItems = [
   { id: 21, name: 'Item 21', price: '$59.00' },
   { id: 22, name: 'Item 22', price: '$400.00' },
   { id: 23, name: 'Item 23', price: '$280.00' },
+  { id: 24, name: 'Item 24', price: '$655.00' },
+  { id: 25, name: 'Item 25', price: '$99.00' },
+  { id: 26, name: 'Item 26', price: '$60.00' },
+  { id: 27, name: 'Item 27', price: '$380.00' },
 ];
 
 const pageVariants = {
@@ -61,29 +69,56 @@ const pageVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
+const stripePromise = loadStripe('pk_test_XXXXXXXXXXXXXXXXXXXXXXXX'); // Replace with your Stripe public key
+
 const Home = () => {
   const [cart, setCart] = useState([]);
   const [search, setSearch] = useState('');
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [leftDrawerOpen, setLeftDrawerOpen] = useState(false);
+  const [rightDrawerOpen, setRightDrawerOpen] = useState(false);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const navigate = useNavigate();
   const theme = useTheme();
 
   const handleAddToCart = (item) => {
-  setCart((prev) => {
-    const updatedCart = [...prev, item];
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
-    return updatedCart;
-  });
-  navigate('/cart');  // Navigate to cart page on add
-};
+    setCart((prev) => [...prev, item]);
+  };
+
+  const handleRemoveFromCart = (itemId) => {
+    setCart((prev) => prev.filter((item) => item.id !== itemId));
+  };
+
+  const handleCheckout = async () => {
+    try {
+      const stripe = await stripePromise;
+
+      const cartItemsFormatted = cart.map((item) => ({
+        name: item.name,
+        price: Number(item.price.replace('$', '')) * 100,
+        quantity: 1,
+      }));
+
+      const response = await axios.post('http://localhost:5000/api/stripe/create-checkout-session', {
+        cartItems: cartItemsFormatted,
+      });
+
+      window.location.href = response.data.url;
+    } catch (error) {
+      console.error('Stripe checkout error:', error);
+      alert('Payment failed. Try again later.');
+    }
+  };
 
   const filteredItems = mockItems.filter((item) =>
     item.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  const toggleDrawer = (open) => () => {
-    setDrawerOpen(open);
+  const toggleLeftDrawer = (open) => () => {
+    setLeftDrawerOpen(open);
+  };
+
+  const toggleRightDrawer = (open) => () => {
+    setRightDrawerOpen(open);
   };
 
   const user = JSON.parse(localStorage.getItem('user'));
@@ -117,7 +152,7 @@ const Home = () => {
         >
           <Toolbar sx={{ justifyContent: 'space-between', flexWrap: 'wrap' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <IconButton color="inherit" edge="start" onClick={toggleDrawer(true)}>
+              <IconButton color="inherit" edge="start" onClick={toggleLeftDrawer(true)}>
                 <MenuIcon />
               </IconButton>
               <Typography variant="h6" sx={{ fontWeight: 700 }}>
@@ -143,22 +178,33 @@ const Home = () => {
             </Box>
 
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <IconButton color="inherit">
+              <IconButton color="inherit" onClick={toggleRightDrawer(true)}>
                 <Badge badgeContent={cart.length} color="error">
                   <ShoppingCart />
                 </Badge>
               </IconButton>
+              {cart.length > 0 && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  onClick={handleCheckout}
+                  sx={{ fontWeight: 600 }}
+                >
+                  Pay Now
+                </Button>
+              )}
               <ThemeToggle floating={false} />
             </Box>
           </Toolbar>
         </AppBar>
 
-        {/* Drawer */}
-        <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
-          <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
+        {/* Drawer for menu */}
+        <Drawer anchor="left" open={leftDrawerOpen} onClose={toggleLeftDrawer(false)}>
+          <Box sx={{ width: 250 }} role="presentation">
             <List>
               <ListItem disablePadding>
-                <ListItemButton onClick={() => navigate('/profile')}>
+                <ListItemButton onClick={() => {navigate('/profile'); setLeftDrawerOpen(false);}}>
                   <ListItemText primary="Profile" />
                   <Avatar
                     sx={{ width: 32, height: 32, ml: 1 }}
@@ -170,26 +216,41 @@ const Home = () => {
               </ListItem>
 
               <ListItem disablePadding>
-                <ListItemButton onClick={() => navigate('/login')}>
+                <ListItemButton onClick={() => {navigate('/login'); setLeftDrawerOpen(false);}}>
                   <ListItemText primary="Login" />
                 </ListItemButton>
               </ListItem>
 
               <ListItem disablePadding>
-                <ListItemButton onClick={() => navigate('/signup')}>
+                <ListItemButton onClick={() => {navigate('/signup'); setLeftDrawerOpen(false);}}>
                   <ListItemText primary="Signup" />
                 </ListItemButton>
               </ListItem>
 
               {user && (
                 <ListItem disablePadding>
-                  <ListItemButton onClick={confirmLogout}>
+                  <ListItemButton onClick={() => {confirmLogout(); setLeftDrawerOpen(false);}}>
                     <ListItemText primary="Logout" />
                   </ListItemButton>
                 </ListItem>
               )}
             </List>
           </Box>
+        </Drawer>
+
+        {/* Cart Drawer */}
+        <Drawer
+          anchor="right"
+          open={rightDrawerOpen}
+          onClose={toggleRightDrawer(false)}
+          PaperProps={{ sx: { width: 350 } }}
+        >
+          <Cart
+            cart={cart}
+            setCart={setCart}
+            onRemove={handleRemoveFromCart}
+            onClose={toggleRightDrawer(false)}
+          />
         </Drawer>
 
         {/* Logout confirmation dialog */}
