@@ -23,6 +23,7 @@ const App = () => {
           <Route path="/signup" element={<Signup />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/goodbye" element={<Goodbye />} /> 
+          <Route path="/Cart" element={<Cart />} />
         </Routes>
       </AnimatePresence>
     </>
