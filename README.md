@@ -29,11 +29,17 @@ Buyzio is a modern React-based shopping application featuring a clean and respon
 - Node.js (v14 or higher recommended)
 - npm or yarn
 
+🌐 Backend Repo: [Buyzio Backend – heyaaman-buyzio-backend](https://github.com/heyaaman/buyzio-backend)
+
 ### Installation
 
 1. Clone the repository:
 
-```bash
+bash
+
 git clone https://github.com/your-username/buyzio.git
 cd buyzio
+
+---
+
 
