@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import logo from '../assets/Buyzio.png'
 import {
   Card,
   CardContent,
@@ -126,6 +127,21 @@ const Login = () => {
           }}
         >
           <CardContent sx={{ p: 4 }}>
+          <Box display="flex" justifyContent="center" mb={2}>
+          <img
+         src={logo}
+         alt="Buyzio Logo"
+        style={{
+        height: '80px',
+         borderRadius: '12px', // rounded edges
+         backgroundColor: '#2196f3', // optional: adds white background padding
+         padding: '4px', // space around logo
+           boxShadow: '0 0 8px rgba(0,0,0,0.1)', // subtle shadow
+          }}
+      />
+       </Box>
+
+
             <Typography
               variant="h4"
               align="center"
