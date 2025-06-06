@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import logo from '../assets/Buyzio1.png';  // adjust the path if needed
 import {
   AppBar,
   Toolbar,
@@ -129,20 +130,34 @@ const Home = () => {
         <AppBar
           position="static"
           sx={{
-            bgcolor: theme.palette.background.default,
+            bgcolor: '#1976d2', // MUI primary blue
             color: theme.palette.text.primary,
             boxShadow: theme.shadows[4],
           }}
         >
           <Toolbar sx={{ justifyContent: 'space-between', flexWrap: 'wrap' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <IconButton color="inherit" edge="start" onClick={toggleLeftDrawer(true)}>
-                <MenuIcon />
-              </IconButton>
-              <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                Buyzio
-              </Typography>
-            </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+  <IconButton color="inherit" edge="start" onClick={toggleLeftDrawer(true)}>
+    <MenuIcon />
+  </IconButton>
+
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+    <Box
+      component="img"
+      src={logo}
+      alt="Buyzio1 Logo"
+      sx={{
+        height: 36,
+        width: 36,
+        objectFit: 'contain',
+        borderRadius: 1,
+      }}
+    />
+    <Typography variant="h6" sx={{ fontWeight: 700 }}>
+      Buyzio
+    </Typography>
+  </Box>
+</Box>
 
             <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
               <TextField
