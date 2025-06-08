@@ -14,6 +14,9 @@ import Cancel from './components/Cancel';
 import Cart from './components/Cart';
 import AdminDashboard from './components/AdminDashboard';
 import AdminLogin from './components/AdminLogin';
+import Processing from './components/Processing';
+import Payment from './components/Payment';
+import PaymentMethod from './components/PaymentMethod';
 
 const App = () => {
   const location = useLocation(); 
@@ -35,6 +38,9 @@ const App = () => {
           <Route path="/cart" element={<Cart/>} /> 
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin-login" element={<AdminLogin />} />
+          <Route path="/processing" element={<Processing />} />
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/payment/:method" element={<PaymentMethod />} />
         </Routes>
       </AnimatePresence>
     </>
@@ -42,3 +48,4 @@ const App = () => {
 };
 
 export default App;
+
