@@ -37,7 +37,7 @@ Buyzio is a modern React-based shopping application featuring a clean and respon
 
 bash
 
-git clone https://github.com/your-username/buyzio.git
+git clone https://github.com/heyaaman/buyzio.git
 
 cd buyzio
 
